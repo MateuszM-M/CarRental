@@ -1,0 +1,12 @@
+*.pyc
+*~
+__pycache__
+/venv/
+.env
+.DS_Store
+CRdocs.docx
+~$Rdocs.docx
+~*
+db.sqlite3
+/media
+
