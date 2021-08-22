@@ -1,5 +1,5 @@
 from django.db import models
-
+from PIL import Image
 
 class Car(models.Model):
     CONDITION = (
@@ -26,3 +26,12 @@ class CarPhoto(models.Model):
                             on_delete=models.CASCADE)
     photo = models.ImageField(blank=True, null=True, upload_to='photos')
     
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        img = Image.open(self.photo.path)
+        
+        if img.height > 800 or img.width > 800:
+            output_size = (800, 800)
+            img.thumbnail(output_size)
+            img.save(self.photo.path)

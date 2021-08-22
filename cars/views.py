@@ -7,5 +7,4 @@ class CarViewSet(viewsets.ModelViewSet):
     This viewset automatically provides `list`
     """
     queryset = Car.objects.all()
-    
-
+    serializer_class = CarSerializer

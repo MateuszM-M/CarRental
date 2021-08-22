@@ -4,4 +4,5 @@ from .models import Car
 class CarSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Car
-        fields = []
+        fields = ['brand', 'model', 'engine', 'year', 'location', 
+                  'condition', 'day_price', 'hour_price']
