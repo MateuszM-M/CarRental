@@ -11,15 +11,12 @@ Simple REST API created with Django Rest Framework
 
 ## Features
 
-
+ - Car list
+ - Car details
+ - Multiple photos model for a car
 
 ## To do
 
- - Car list
- - Car details
  - Car bookings
- - Multiple photos model for a car
  - Customer model
  - Booking model
- - Tests
- - improve main site
