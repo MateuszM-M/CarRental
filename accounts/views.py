@@ -10,7 +10,7 @@ class CreateUserViewSet(mixins.CreateModelMixin,
                                 mixins.RetrieveModelMixin,
                                 viewsets.GenericViewSet):
     """
-    A viewset for viewing and editing user instances.
+    A viewset for registering user instances.
     """
     serializer_class = UserSerializer
     queryset = User.objects.all()
