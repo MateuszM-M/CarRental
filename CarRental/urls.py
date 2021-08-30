@@ -20,17 +20,21 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from accounts import views as accounts_views
 from cars import views as cars_views
+from bookings import views as bookings_views
 from rest_framework.authtoken.views import obtain_auth_token
+
 
 router = DefaultRouter()
 router.register(r'cars', cars_views.CarViewSet)
 router.register(r'users', accounts_views.CreateUserViewSet)
+router.register(r'bookings', bookings_views.BookingViewSet)
+
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('api-token-auth/', obtain_auth_token)
+    path('api-token-auth/', obtain_auth_token),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
