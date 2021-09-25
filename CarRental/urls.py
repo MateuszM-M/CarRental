@@ -36,6 +36,9 @@ router.register(r'bookings', bookings_views.BookingViewSet)
 router.register(r'my-bookings', 
                 bookings_views.UserBookingViewSet, 
                 basename='my-bookings')
+router.register(r'create-booking', 
+                bookings_views.CreateBookingViewSet, 
+                basename='create-bookings')
 
 
 

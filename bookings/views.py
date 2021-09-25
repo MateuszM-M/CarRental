@@ -32,3 +32,13 @@ class UserBookingViewSet(mixins.ListModelMixin,
         """
         user = self.request.user.id
         return Booking.objects.filter(user=user)
+    
+
+class CreateBookingViewSet(mixins.CreateModelMixin,
+                                viewsets.GenericViewSet):
+    """
+    View for creating bookings by authenticated user.
+    """
+    serializer_class = BookingSerializer
+    permission_classes = [IsAuthenticated]
+    
