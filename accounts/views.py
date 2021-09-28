@@ -6,10 +6,21 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
+from .permissions import IsNotAuthenticated
 
 
 class CreateUserViewSet(mixins.CreateModelMixin,
-                                mixins.ListModelMixin,
+                                viewsets.GenericViewSet):
+    """
+    A viewset for registering user instances.
+    """
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = [IsNotAuthenticated]
+    
+   
+class ListRetrieveUserViewSet(mixins.ListModelMixin,
                                 mixins.RetrieveModelMixin,
                                 viewsets.GenericViewSet):
     """
@@ -17,8 +28,6 @@ class CreateUserViewSet(mixins.CreateModelMixin,
     """
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    
-   
-
+    permission_classes = [IsAdminUser]
 
         

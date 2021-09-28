@@ -26,7 +26,6 @@ class UserSerializer(serializers.ModelSerializer):
         password2 = value
         if password != password2:
             raise ValidationError('Passwords must match')
-        breakpoint()
         return super(UserSerializer, self).validate(value)
         
     def validate_password(self, value):
