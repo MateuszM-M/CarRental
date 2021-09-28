@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import BookingSerializer
+from .serializers import BookingSerializer, CreateBookingSerializer
 from rest_framework import viewsets, mixins
 from .models import Booking
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -39,6 +39,6 @@ class CreateBookingViewSet(mixins.CreateModelMixin,
     """
     View for creating bookings by authenticated user.
     """
-    serializer_class = BookingSerializer
+    serializer_class = CreateBookingSerializer
     permission_classes = [IsAuthenticated]
     
