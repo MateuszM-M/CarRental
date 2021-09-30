@@ -1,25 +1,37 @@
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from .models import Car, CarPhoto
 from .serializers import CarSerializer, CarPhotoSerializer
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAdminUser
+     
 
-
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'cars': reverse('car-list', request=request, format=format),
-        'car-photos': reverse('car-photos', request=request, format=format),
-    })
-    
-    
-
-class CarViewSet(viewsets.ModelViewSet):
+class CarViewSet(mixins.ListModelMixin,
+                mixins.RetrieveModelMixin,
+                viewsets.GenericViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`,
+    This viewset automatically provides `list`, `retrieve`,
     `update` and `destroy` actions.
     """
     queryset = Car.objects.all()
     serializer_class = CarSerializer
+    
+
+class CreateCarViewSet(mixins.CreateModelMixin,
+                       viewsets.GenericViewSet):
+    """
+    View for creating cars by staff
+    """
+    serializer_class = CarSerializer
+    permission_classes = [IsAdminUser]
+    
+
+class AddCarPhotoViewSet(mixins.CreateModelMixin,
+                  viewsets.GenericViewSet):    
+    """
+    View for adding car photos by staff
+    """
+    serializer_class = CarPhotoSerializer
+    permission_classes = [IsAdminUser]
     
     

@@ -26,7 +26,6 @@ class CarPhoto(models.Model):
                             on_delete=models.CASCADE)
     photo = models.ImageField(blank=True, null=True, upload_to='photos')
     
-    
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         img = Image.open(self.photo.path)

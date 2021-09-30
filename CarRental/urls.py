@@ -26,6 +26,12 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 router = DefaultRouter()
 router.register(r'cars', cars_views.CarViewSet)
+router.register(r'add-car', 
+                cars_views.CreateCarViewSet,
+                basename='add-car')
+router.register(r'add-car-photo', 
+                cars_views.AddCarPhotoViewSet,
+                basename='add-car-photo')
 router.register(r'register', 
                 accounts_views.CreateUserViewSet, 
                 basename='register')
