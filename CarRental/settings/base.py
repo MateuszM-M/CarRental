@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'storages',
     'rest_framework',
-    'rest_framework.authtoken',
     'cars.apps.CarsConfig',
     'accounts.apps.AccountsConfig',
     'bookings.apps.BookingsConfig',
