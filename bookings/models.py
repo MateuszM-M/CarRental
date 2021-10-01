@@ -8,3 +8,4 @@ class Booking(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     booking_start = models.DateField()
     booking_end = models.DateField()
+
