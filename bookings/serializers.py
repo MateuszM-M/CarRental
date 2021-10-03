@@ -23,6 +23,33 @@ class CreateBookingSerializer(serializers.ModelSerializer):
         model = Booking
         fields = ['user', 'car', 'booking_start', 'booking_end']
         
+    def validate(self, data):
+        booking_start = data.get('booking_start')
+        booking_end = data.get('booking_end')
+        car = data.get('car')
+        
+        # car booked before start and ends after start
+        case_1 = Booking.objects.filter(car=car,
+                                        booking_start__lte=booking_start,
+                                        booking_end__gte=booking_start
+        ).exists()
+        # car booked before booking end, booking end after request booking end
+        case_2 = Booking.objects.filter(car=car,
+                                        booking_start__lte=booking_end,
+                                        booking_end__gte=booking_end
+        ).exists()
+        # booking "inside" requesteg booking
+        case_3 = Booking.objects.filter(car=car,
+                                        booking_start__gte=booking_start,
+                                        booking_end__lte=booking_end
+        ).exists()
+        
+        if case_1 or case_2 or case_3:
+            raise ValidationError(
+                'These dates are occupied'
+                )
+        return data
+        
     def validate_booking_start(self, value):
         booking_start = value
         today_value = timezone.now().today().date()
