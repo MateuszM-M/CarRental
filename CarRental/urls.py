@@ -51,12 +51,13 @@ router.register(r'create-booking',
                 basename='create-bookings')
 
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('login/', TokenObtainPairView.as_view(), name='login'),
+    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('logout/', accounts_views.LogoutView.as_view(), name='logout'),
+    path('logout-all/', accounts_views.LogoutAllView.as_view(), name='logout-all')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

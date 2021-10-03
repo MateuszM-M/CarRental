@@ -4,6 +4,7 @@ from django.core import exceptions
 import django.contrib.auth.password_validation as validators
 from rest_framework.exceptions import ValidationError
 from .models import Profile
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -60,3 +61,20 @@ class UserSerializer(serializers.ModelSerializer):
         Profile.objects.create(user=user, **profile_data)
         return user
                 
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    default_error_message = {
+        'bad_token': ('Token is expired or invalid')
+    }
+
+    def validate(self, value):
+        self.token = value['refresh']
+        return value
+
+    def save(self, **kwargs):
+        try:
+            RefreshToken(self.token).blacklist()
+        except TokenError:
+            self.fail('bad_token')
