@@ -18,11 +18,12 @@ class CarViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUserOrReadOnly]
     
 
-class AddCarPhotoViewSet(mixins.CreateModelMixin,
-                  viewsets.GenericViewSet):    
+class CarPhotoViewSet(viewsets.ModelViewSet):    
     """
-    This viewset automatically provides
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions for staff
     """
+    queryset = CarPhoto.objects.all()
     serializer_class = CarPhotoSerializer
     permission_classes = [IsAdminUser]
     

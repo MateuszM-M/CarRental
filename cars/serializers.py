@@ -2,11 +2,11 @@ from rest_framework import serializers
 from .models import Car, CarPhoto
 
 
-class CarPhotoSerializer(serializers.ModelSerializer):
+class CarPhotoSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = CarPhoto
-        fields = ['car', 'photo']
+        fields = ['url', 'car', 'photo']
         extra_kwargs = {
             'car': {'write_only': True},
         }
