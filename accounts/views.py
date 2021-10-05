@@ -28,7 +28,7 @@ class ListRetrieveUserViewSet(mixins.ListModelMixin,
                                 mixins.RetrieveModelMixin,
                                 viewsets.GenericViewSet):
     """
-    A viewset for registering user instances.
+    A viewset for viewing user instances by staff.
     """
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -36,6 +36,10 @@ class ListRetrieveUserViewSet(mixins.ListModelMixin,
 
 
 class LogoutView(APIView):
+    """
+    View for logging out by blacklisting a currnetly used token.
+    """
+    
     serializer_class = LogoutSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -47,6 +51,9 @@ class LogoutView(APIView):
         
     
 class LogoutAllView(APIView):
+    """
+    View for logging out by blacklisting all outstanding tokens
+    """
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
