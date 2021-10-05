@@ -15,6 +15,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
     filterset_fields = ['car',]
+    page_size = 1
     
     def get_queryset(self):
         user = self.request.user
