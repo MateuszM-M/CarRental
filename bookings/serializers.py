@@ -25,7 +25,7 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
         model = Booking
         fields = ['url', 'user', 'car', 'car_id', 'booking_start', 
                   'booking_end']
-        
+                
     def validate(self, data):
         booking_start = data.get('booking_start')
         booking_end = data.get('booking_end')

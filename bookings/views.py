@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .serializers import BookingSerializer
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, filters
 from .models import Booking
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
@@ -14,6 +14,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     """
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
+    filterset_fields = ['car',]
     
     def get_queryset(self):
         user = self.request.user
@@ -21,22 +22,3 @@ class BookingViewSet(viewsets.ModelViewSet):
             return Booking.objects.all()
         else:
             return Booking.objects.filter(user=user)
-    
-    
-class UserBookingViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing and editing booking instances
-    by authenticated user.
-    """
-    serializer_class = BookingSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        """
-        This should return a list of all the bookings
-        for the currently authenticated user.
-        """
-        user = self.request.user.id
-        return Booking.objects.filter(user=user)
-    
-  
