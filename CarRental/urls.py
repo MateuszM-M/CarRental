@@ -49,13 +49,8 @@ router.register(r'register',
 router.register(r'users', 
                 accounts_views.ListRetrieveUserViewSet, 
                 basename='users')
-router.register(r'bookings', bookings_views.BookingViewSet)
-router.register(r'my-bookings', 
-                bookings_views.UserBookingViewSet, 
-                basename='my-bookings')
-router.register(r'create-booking', 
-                bookings_views.CreateBookingViewSet, 
-                basename='create-bookings')
+router.register(r'bookings', bookings_views.BookingViewSet, basename='bookings')
+
 
 
 urlpatterns = [
