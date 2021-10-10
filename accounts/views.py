@@ -6,33 +6,46 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from .permissions import IsNotAuthenticated
 from rest_framework_simplejwt.tokens import (
     RefreshToken, OutstandingToken, BlacklistedToken
     )
 from rest_framework.views import APIView
+from django.contrib.auth.models import User
 
-
-class CreateUserViewSet(mixins.CreateModelMixin,
-                                viewsets.GenericViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     """
-    A viewset for registering user instances.
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
     """
     serializer_class = UserSerializer
-    queryset = User.objects.all()
-    permission_classes = [IsNotAuthenticated]
     
-   
-class ListRetrieveUserViewSet(mixins.ListModelMixin,
-                                mixins.RetrieveModelMixin,
-                                viewsets.GenericViewSet):
-    """
-    A viewset for viewing user instances by staff.
-    """
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
-    permission_classes = [IsAdminUser]
+    def get_permissions(self):
+        """
+        This method ensures that only unauthenticated user can regiser
+        a new account. Action 'list' also retained in this permission
+        so register form is still available in browseable api, get_queryset
+        method ensures that no user detail could be listed.
+        """
+        if self.action in ('create',):
+            permission_classes = [IsNotAuthenticated]
+        elif self.action in ('list',):
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            return User.objects.all()
+        else:
+            return User.objects.filter(username=user)
+        
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
 
 
 class LogoutView(APIView):

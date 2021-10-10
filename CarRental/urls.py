@@ -43,11 +43,8 @@ schema_view = get_schema_view(
 router = DefaultRouter()
 router.register(r'cars', cars_views.CarViewSet)
 router.register(r'car-photos', cars_views.CarPhotoViewSet)
-router.register(r'register', 
-                accounts_views.CreateUserViewSet, 
-                basename='register')
 router.register(r'users', 
-                accounts_views.ListRetrieveUserViewSet, 
+                accounts_views.UserViewSet, 
                 basename='users')
 router.register(r'bookings', bookings_views.BookingViewSet, basename='bookings')
 

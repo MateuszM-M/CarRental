@@ -11,11 +11,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Profile
-        fields = ('first_name', 'last_name', 'city', 
-                  'street', 'number', 'phone')
+        fields = ('first_name', 'last_name', 'country', 'city', 'postal_code',
+                  'street', 'apartment_number', 'phone_number')
         
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="users-detail")
     profile = ProfileSerializer()
     password = serializers.CharField(
         style={'input_type': 'password'},
@@ -29,7 +30,8 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ('id', 'username', "email", "password", "password2", 'profile')
+        fields = ('url', 'id', 'username', "email", "password", "password2", 
+                  'profile')
         
     def validate_password2(self, value):
         data = self.get_initial()
