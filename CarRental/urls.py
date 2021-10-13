@@ -53,6 +53,7 @@ router.register(r'bookings', bookings_views.BookingViewSet, basename='bookings')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
+    path('email-verify/', accounts_views.VerifyEmail.as_view(), name='email-verify'),
     path('login/', TokenObtainPairView.as_view(), name='login'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/', accounts_views.LogoutView.as_view(), name='logout'),

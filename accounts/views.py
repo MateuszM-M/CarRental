@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from .permissions import IsNotAuthenticated
 from rest_framework_simplejwt.tokens import (
@@ -13,6 +12,14 @@ from rest_framework_simplejwt.tokens import (
     )
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+from rest_framework.decorators import action
+from django.core.mail import EmailMessage
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+from .utils import Util
+import jwt
+from django.conf import settings
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -43,10 +50,56 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return User.objects.filter(username=user)
         
+    def create(self, request, *args, **kwargs):
+        """
+        Override of create method to send activation email
+        """
+        user = request.data
+        serializer = self.get_serializer(data=user)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        user_data = serializer.data
+        user = User.objects.get(username=user_data['username'])
+        token = RefreshToken.for_user(user).access_token
+        current_site = get_current_site(request).domain
+        relative_link = reverse('email-verify')
+        absurl = 'http://'+current_site+relative_link+"?token="+str(token)
+        email_body = 'Hi '+user.username + \
+            ' Use the link below to verify your email \n' + absurl
+        data = {'email_body': email_body, 'to_email': user.email,
+                'email_subject': 'Verify your email'}
+        
+        Util.send_email(data)
+        return Response(serializer.data, 
+                        status=status.HTTP_201_CREATED, 
+                        headers=headers)
+                
     def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
-
+        
+        
+class VerifyEmail(generics.GenericAPIView):
+    def get(self, request):
+        token = request.GET.get('token')
+        try:
+            payload = jwt.decode(token, 
+                                settings.SECRET_KEY, 
+                                algorithms='HS256')
+            user = User.objects.get(id=payload['user_id'])
+            if not user.is_active:
+                user.is_active = True
+                user.save()
+            return Response({'account': 'Successfully activated'}, 
+                            status=status.HTTP_200_OK)
+        except jwt.ExpiredSignatureError as identifier:
+            return Response({'error': 'Activation Expired'}, 
+                            status=status.HTTP_400_BAD_REQUEST)
+        except jwt.exceptions.DecodeError as identifier:
+            return Response({'error': 'Invalid token'}, 
+                            status=status.HTTP_400_BAD_REQUEST)
+        
 
 class LogoutView(APIView):
     """
