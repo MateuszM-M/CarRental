@@ -54,11 +54,16 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('email-verify/', accounts_views.VerifyEmail.as_view(), name='email-verify'),
+    path('change_password/<int:pk>/', 
+        accounts_views.ChangePasswordView.as_view(), 
+        name='change_password'),
     path('login/', TokenObtainPairView.as_view(), name='login'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/', accounts_views.LogoutView.as_view(), name='logout'),
     path('logout-all/', accounts_views.LogoutAllView.as_view(), name='logout-all'),
-    path('swagger-doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('swagger-doc/', 
+        schema_view.with_ui('swagger', cache_timeout=0), 
+        name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 

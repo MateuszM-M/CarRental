@@ -70,6 +70,59 @@ class EmailVerificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['token']
+        
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    password1 = serializers.CharField(
+        write_only=True, 
+        required=True,
+        )
+    password2 = serializers.CharField(
+        write_only=True, 
+        required=True
+        )
+    old_password = serializers.CharField(
+        write_only=True, 
+        required=True
+        )
+
+    class Meta:
+        model = User
+        fields = ('old_password', 'password1', 'password2')
+
+    def validate(self, attrs):
+        if attrs['password1'] != attrs['password2']:
+            raise serializers.ValidationError(
+                {'password1': "password fields dont match !"})
+        return attrs
+    
+    def validate_password1(self, value):
+        password = value
+        errors = dict()
+        try:
+            validators.validate_password(password=password)
+        except exceptions.ValidationError as e:
+            errors['password'] = list(e.messages)
+            if errors:
+                raise serializers.ValidationError(errors)
+        return super(ChangePasswordSerializer, self).validate(value)
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError(
+                {"old_password": "Old password is not correct !"})
+        return value
+    
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+        if user.pk != instance.pk:
+            raise serializers.ValidationError(
+                {"authorize": "You dont have permission for this user !"})
+
+        instance.set_password(validated_data['password1'])
+        instance.save()
+        return instance
                 
 
 class LogoutSerializer(serializers.Serializer):

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .serializers import (
-    UserSerializer, LogoutSerializer, EmailVerificationSerializer
+    UserSerializer, LogoutSerializer, EmailVerificationSerializer,
+    ChangePasswordSerializer,
     )
 from rest_framework import viewsets, mixins, status, generics, views
 from django.contrib.auth.models import User
@@ -82,6 +83,12 @@ class UserViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
+        
+
+class ChangePasswordView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
         
         
 class VerifyEmail(views.APIView):
