@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from .serializers import UserSerializer, LogoutSerializer
-from rest_framework import viewsets, mixins, status, generics
+from .serializers import (
+    UserSerializer, LogoutSerializer, EmailVerificationSerializer
+    )
+from rest_framework import viewsets, mixins, status, generics, views
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -19,6 +21,8 @@ from django.urls import reverse
 from .utils import Util
 import jwt
 from django.conf import settings
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -80,7 +84,15 @@ class UserViewSet(viewsets.ModelViewSet):
         instance.save()
         
         
-class VerifyEmail(generics.GenericAPIView):
+class VerifyEmail(views.APIView):
+    serializer_class = EmailVerificationSerializer
+    
+    token_param_config = openapi.Parameter(
+        'token', in_=openapi.IN_QUERY,
+        description='Description',
+        type=openapi.TYPE_STRING)
+    
+    @swagger_auto_schema(manual_parameters=[token_param_config])
     def get(self, request):
         token = request.GET.get('token')
         try:
