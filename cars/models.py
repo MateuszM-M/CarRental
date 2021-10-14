@@ -11,6 +11,7 @@ class Car(models.Model):
     model = models.CharField(max_length=50)
     engine = models.CharField(max_length=50)
     year = models.CharField(max_length=50)
+    mileage = models.DecimalField(max_digits=6, decimal_places=0)
     location = models.CharField(max_length=50)
     condition = models.CharField(max_length=50, choices=CONDITION)
     day_price = models.DecimalField(max_digits=6, decimal_places=2)
