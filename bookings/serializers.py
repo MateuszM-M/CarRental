@@ -12,8 +12,10 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         read_only=True, 
         default=serializers.CurrentUserDefault())
+    
     # Nested CarSerializer on read
     car = CarSerializer(read_only=True)
+    
     # CarField on write
     car_id = serializers.PrimaryKeyRelatedField(
         write_only=True,
@@ -24,7 +26,12 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Booking
         fields = ['url', 'user', 'car', 'car_id', 'booking_start', 
-                  'booking_end']
+                  'booking_end', 'created', 'updated', 'booking_duration',
+                  'total_price']
+        extra_kwargs = {
+            'booking_duration': {'read_only':True},
+            'total_price': {'read_only':True}
+        }
                 
     def validate(self, data):
         booking_start = data.get('booking_start')

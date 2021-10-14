@@ -23,3 +23,4 @@ class BookingViewSet(viewsets.ModelViewSet):
             return Booking.objects.all()
         else:
             return Booking.objects.filter(user=user)
+
