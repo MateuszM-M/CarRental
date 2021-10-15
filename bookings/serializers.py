@@ -1,13 +1,21 @@
-from rest_framework import serializers
-from .models import Booking
+from datetime import date, datetime
+
+from cars.models import Car
 from cars.serializers import CarSerializer
 from django.utils import timezone
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from datetime import datetime, date
-from cars.models import Car
+
+from .models import Booking
 
 
 class BookingSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Serializer for booking that serialize 'url', 'user', 
+    'booking_start', 'booking_end', 'created', 'updated', 
+    'booking_duration', 'total_price'
+    and relation to car serializer
+    """
     url = serializers.HyperlinkedIdentityField(view_name="bookings-detail")
     user = serializers.PrimaryKeyRelatedField(
         read_only=True, 
@@ -34,6 +42,10 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
         }
                 
     def validate(self, data):
+        """
+        Ensures that user can not book a car this is already booked
+        in selected period
+        """
         booking_start = data.get('booking_start')
         booking_end = data.get('booking_end')
         car = data.get('car')
@@ -61,6 +73,9 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
         return data
         
     def validate_booking_start(self, value):
+        """
+        Ensures that the earlies possible booking start day is today
+        """
         booking_start = value
         today_value = timezone.now().today().date()
         if booking_start < today_value:
@@ -70,6 +85,9 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
         return super(BookingSerializer, self).validate(value)
     
     def validate_booking_end(self, value):
+        """
+        Ensures that booking end date can not be before booking start date
+        """
         data = self.get_initial()
         booking_start = data.get('booking_start')
         booking_start = datetime.strptime(booking_start, '%Y-%m-%d').date()
@@ -86,3 +104,4 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
         """
         kwargs["user"] = self.fields["user"].get_default()
         return super().save(**kwargs)
+    

@@ -1,6 +1,7 @@
 from django.db import models
 from PIL import Image
 
+
 class Car(models.Model):
     CONDITION = (
         ('used', 'used'),

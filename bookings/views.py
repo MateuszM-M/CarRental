@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from .serializers import BookingSerializer
-from rest_framework import viewsets, mixins, filters
-from .models import Booking
+from rest_framework import filters, mixins, viewsets
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+
+from .models import Booking
+from .serializers import BookingSerializer
 
 
 class BookingViewSet(viewsets.ModelViewSet):
@@ -10,7 +11,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
     User have CRUD operations on own objects.
-    Staff have Crud operation on all objects.
+    Staff have CRUD operation on all objects.
     """
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]

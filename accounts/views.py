@@ -1,43 +1,41 @@
-from django.shortcuts import render
-from .serializers import (
-    UserSerializer, LogoutSerializer, EmailVerificationSerializer,
-    ChangePasswordSerializer, ResetPasswordEmailRequestSerializer,
-    SetNewPasswordSerializer,
-    )
-from rest_framework import viewsets, mixins, status, generics, views
-from django.contrib.auth.models import User
-from rest_framework.response import Response
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny 
-from .permissions import IsNotAuthenticated
-from rest_framework_simplejwt.tokens import (
-    RefreshToken, OutstandingToken, BlacklistedToken
-    )
-from rest_framework.views import APIView
-from django.contrib.auth.models import User
-from rest_framework.decorators import action
-from django.core.mail import EmailMessage
-from django.contrib.sites.shortcuts import get_current_site
-from django.urls import reverse
-from .utils import Util
 import jwt
 from django.conf import settings
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.utils.encoding import (
-    smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
-    )
+from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
 from django.http import HttpResponsePermanentRedirect
+from django.shortcuts import render
+from django.urls import reverse
+from django.utils.encoding import (DjangoUnicodeDecodeError, force_str,
+                                   smart_bytes, smart_str)
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics, mixins, status, views, viewsets
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import (BlacklistedToken,
+                                             OutstandingToken, RefreshToken)
 
+from .permissions import IsNotAuthenticated
+from .serializers import (ChangePasswordSerializer,
+                          EmailVerificationSerializer, LogoutSerializer,
+                          ResetPasswordEmailRequestSerializer,
+                          SetNewPasswordSerializer, UserSerializer)
+from .utils import Util
 
 
 class UserViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
+    Abovementioned actions can be performed by request user or 
+    by staff on any user
     """
     serializer_class = UserSerializer
     
@@ -89,17 +87,26 @@ class UserViewSet(viewsets.ModelViewSet):
                         headers=headers)
                 
     def perform_destroy(self, instance):
+        """
+        Override of destroy method to perform soft delete
+        """
         instance.is_active = False
         instance.save()
         
 
 class ChangePasswordView(generics.UpdateAPIView):
+    """
+    View that enables changing password by request user
+    """
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = ChangePasswordSerializer
         
         
 class VerifyEmail(views.APIView):
+    """
+    View that enables email verification
+    """
     serializer_class = EmailVerificationSerializer
     
     token_param_config = openapi.Parameter(
@@ -130,6 +137,9 @@ class VerifyEmail(views.APIView):
 
 
 class RequestPasswordResetEmail(generics.GenericAPIView):
+    """
+    View to type email to reset password
+    """
     serializer_class = ResetPasswordEmailRequestSerializer
 
     def post(self, request):
@@ -159,6 +169,9 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
 
 
 class PasswordTokenCheckAPI(generics.GenericAPIView):
+    """
+    View with credentials to reset password
+    """
     serializer_class = SetNewPasswordSerializer
 
     def get(self, request, uidb64, token):
@@ -192,6 +205,9 @@ class PasswordTokenCheckAPI(generics.GenericAPIView):
 
 
 class SetNewPasswordAPIView(generics.GenericAPIView):
+    """
+    View to setting new password
+    """
     serializer_class = SetNewPasswordSerializer
 
     def patch(self, request):

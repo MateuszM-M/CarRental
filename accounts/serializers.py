@@ -1,19 +1,21 @@
-from rest_framework import serializers
+from django.contrib.auth import password_validation as validators
 from django.contrib.auth.models import User
-from django.core import exceptions
-import django.contrib.auth.password_validation as validators
-from rest_framework.exceptions import ValidationError
-from .models import Profile
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import (
-    smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError,
-    )
+from django.core import exceptions
+from django.utils.encoding import (DjangoUnicodeDecodeError, force_str,
+                                   smart_bytes, smart_str)
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
+from .models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    """
+    Serialzier for profile, that extends user instance
+    """
     
     class Meta:
         model = Profile
@@ -22,6 +24,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Serializer for user that serialize "url", "username", "email",
+    "password", "password2" and relation to profile serializer
+    """
+    
     url = serializers.HyperlinkedIdentityField(view_name="users-detail")
     profile = ProfileSerializer()
     password = serializers.CharField(
@@ -36,10 +43,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', "email", "password", "password2", 
+        fields = ('url', 'username', "email", "password", "password2", 
                   'profile')
         
     def validate_password2(self, value):
+        """
+        Checks if password2 is the same as password
+        """
         data = self.get_initial()
         password = data.get('password')
         password2 = value
@@ -48,6 +58,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return super(UserSerializer, self).validate(value)
         
     def validate_password(self, value):
+        """
+        Validates password by django validators
+        """
         password = value
         errors = dict()
         try:
@@ -59,6 +72,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return super(UserSerializer, self).validate(value)
     
     def create(self, validated_data):
+        """
+        Creates user and related profile instance
+        """
         profile_data = validated_data.pop('profile')
         user = User(
             email=validated_data['email'],
@@ -68,9 +84,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user.save()
         Profile.objects.create(user=user, **profile_data)
         return user
-    
+        
 
 class EmailVerificationSerializer(serializers.ModelSerializer):
+    """
+    serializer used to verify account by email
+    """
     token = serializers.CharField(max_length=555)
 
     class Meta:
@@ -79,6 +98,9 @@ class EmailVerificationSerializer(serializers.ModelSerializer):
         
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
+    """
+    serializer to enable changing password
+    """
     password1 = serializers.CharField(
         write_only=True, 
         required=True,
@@ -97,12 +119,18 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         fields = ('old_password', 'password1', 'password2')
 
     def validate(self, attrs):
+        """
+        checks if password2 is the same as password1
+        """
         if attrs['password1'] != attrs['password2']:
             raise serializers.ValidationError(
                 {'password1': "password fields dont match !"})
         return attrs
     
     def validate_password1(self, value):
+        """
+        Validates password by django validators
+        """
         password = value
         errors = dict()
         try:
@@ -114,6 +142,9 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         return super(ChangePasswordSerializer, self).validate(value)
 
     def validate_old_password(self, value):
+        """
+        Checks if old password is correct
+        """
         user = self.context['request'].user
         if not user.check_password(value):
             raise serializers.ValidationError(
@@ -121,6 +152,9 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         return value
     
     def update(self, instance, validated_data):
+        """
+        Overrides update method
+        """
         user = self.context['request'].user
         if user.pk != instance.pk:
             raise serializers.ValidationError(
@@ -132,6 +166,9 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
+    """
+    Serializer to enter email to reset password
+    """
     email = serializers.EmailField(min_length=2)
 
     class Meta:
@@ -139,6 +176,9 @@ class ResetPasswordEmailRequestSerializer(serializers.Serializer):
 
 
 class SetNewPasswordSerializer(serializers.Serializer):
+    """
+    Serializer to set new password
+    """
     password = serializers.CharField(
         min_length=6, max_length=68, write_only=True)
     token = serializers.CharField(
