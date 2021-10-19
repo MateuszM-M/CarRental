@@ -35,7 +35,10 @@ class UserViewSet(viewsets.ModelViewSet):
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
     Abovementioned actions can be performed by request user or 
-    by staff on any user
+    by staff on any user.
+    
+    password fields applies only to creating new user,
+    to change password use change password endopint
     """
     serializer_class = UserSerializer
     
@@ -85,6 +88,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, 
                         status=status.HTTP_201_CREATED, 
                         headers=headers)
+        
                 
     def perform_destroy(self, instance):
         """

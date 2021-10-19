@@ -34,11 +34,15 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     password = serializers.CharField(
         style={'input_type': 'password'},
         write_only=True,
+        # required set to false, to allow update wuthout password field
+        # password existance is being checked in create method
+        required=False,
         )
     password2 = serializers.CharField(
         label='Confirm password', 
         write_only=True,
-        style={'input_type': 'password'}
+        style={'input_type': 'password'},
+        required=False,
         )
     
     class Meta:
@@ -80,10 +84,41 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             email=validated_data['email'],
             username=validated_data['username']
         )
+        # required set to false in password field so need to check here
+        if 'password' not in validated_data:
+            raise ValidationError(
+                {"password": "This field may not be blank."})
         user.set_password(validated_data['password'])
         user.save()
         Profile.objects.create(user=user, **profile_data)
         return user
+    
+    def update(self, instance, validated_data):
+        nested_serializer = self.fields['profile']
+        nested_instance = instance.profile
+        nested_data = validated_data.pop('profile')
+        nested_serializer.update(nested_instance, nested_data)
+        if 'password' in validated_data:
+            validated_data.pop('password')
+
+        return super(UserSerializer, self).update(instance, validated_data)
+    
+   
+    # def update(self, instance, validated_data):
+    #     user = User(
+    #         email=validated_data['email'],
+    #         username=validated_data['username'],
+    #         password=validated_data['password'],
+    #         # password2=validated_data['password2'],
+    #     )
+    #     profile_data = validated_data.pop("profile")
+    #     username = self.data['username']
+    #     user_serializer = UserSerializer(data=user)
+    #     user = User.objects.get(username=username)
+    #     if user_serializer.is_valid():
+    #         user_serializer.update(user, user_data)
+    #     instance.save()
+    #     return instance     
         
 
 class EmailVerificationSerializer(serializers.ModelSerializer):
