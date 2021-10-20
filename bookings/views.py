@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import filters, mixins, viewsets
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
@@ -15,8 +17,9 @@ class BookingViewSet(viewsets.ModelViewSet):
     """
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['car',]
-    page_size = 1
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['car', 'booking_start', 'booking_end', 'created']
+    ordering_fields = ['booking_start', 'booking_end']
     
     def get_queryset(self):
         user = self.request.user

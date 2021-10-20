@@ -49,6 +49,7 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
         booking_start = data.get('booking_start')
         booking_end = data.get('booking_end')
         car = data.get('car')
+        instance = self.instance
         
         # Requested booking ends during existing booking, 
         # select sooner booking end date
@@ -68,20 +69,22 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
                                         booking_end__lte=booking_end
         ).exists()
         
-        if case_1:
-            raise ValidationError(
-                """Requested booking ends during existing booking, \
-                select sooner booking end date"""
-                )
-        elif case_2:
-            raise ValidationError(
-                "Requested booking starts during existing booking, \
-                    select later booking start date"
-                )
-        elif case_3:
-            raise ValidationError(
-                'Requested booking starts and ends during existing booking'
-                )
+        if not (instance and instance.car == car):
+            if case_1:
+                raise ValidationError(
+                    """Requested booking ends during existing booking, \
+                    select sooner booking end date"""
+                    )
+            elif case_2:
+                raise ValidationError(
+                    "Requested booking starts during existing booking, \
+                        select later booking start date"
+                    )
+            elif case_3:
+                raise ValidationError(
+                    'Requested booking starts and ends during existing booking'
+                    )
+            return data
         return data
         
     def validate_booking_start(self, value):
