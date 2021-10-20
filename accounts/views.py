@@ -139,7 +139,6 @@ class VerifyEmail(views.APIView):
                             status=status.HTTP_400_BAD_REQUEST)
          
 
-
 class RequestPasswordResetEmail(generics.GenericAPIView):
     """
     View to type email to reset password
