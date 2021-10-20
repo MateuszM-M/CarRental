@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['api-car-rental.herokuapp.com',
+ALLOWED_HOSTS = ['car-rental-rest-api.herokuapp.com',
                 '127.0.0.1']
 
 
@@ -12,10 +12,10 @@ ALLOWED_HOSTS = ['api-car-rental.herokuapp.com',
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'd30j158sku0b0p',
-        'USER': 'aekrsuycroltdr',
+        'NAME': 'd24gp8j7ufs7qq',
+        'USER': 'ghfykijucmbmfa',
         'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': 'ec2-54-155-208-5.eu-west-1.compute.amazonaws.com',
+        'HOST': 'ec2-34-255-134-200.eu-west-1.compute.amazonaws.com',
         'PORT': '5432',
     }
 }
