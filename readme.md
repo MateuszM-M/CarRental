@@ -1,8 +1,19 @@
 # CarRental REST API
 
-Simple REST API created with Django Rest Framework
+## Table of contents
+* [General info](#general-info)
+* [Technologies](#technologies)
+* [Features](#features)
+* [To do](#to-do)
+* [Documentation](#documentation)
+* [Setup](#setup)
 
-## Tech
+
+## General info
+
+Simple REST API created with Django Rest Framework. Car booking app created for learning purpose.
+
+## Technologies
  - Python
  - Django
  - Django Rest Framework
@@ -32,3 +43,40 @@ Simple REST API created with Django Rest Framework
 ## To do
 
  - Tests
+
+ ## Documentation
+
+ API root : https://car-rental-rest-api.herokuapp.com/
+
+ all endpoints and documentation available at:
+
+ swagger : https://car-rental-rest-api.herokuapp.com/swagger-doc
+
+ redoc: https://car-rental-rest-api.herokuapp.com/redoc
+
+ ## Setup 
+
+Clone repo `git clone https://github.com/MateuszM-M/CarRental`,
+
+Go to repo directory `cd CarRental`,
+
+Create virtual environment `python -m venv venv`,
+
+Activate environment `venv\scripts\activate`,
+
+Install required packages `pip install -r requirements.txt`,
+
+Rename MMblog/settings/`.env-example` to `.env`,
+
+Migrate database `python manage.py migrate`,
+
+Create superuser `python manage.py createsuperuser`,
+
+Make server up and running `python manage.py runserver`,
+
+Browse http://127.0.0.1:8000/
+
+Or
+
+Online demo: https://car-rental-rest-api.herokuapp.com/
+
