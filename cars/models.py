@@ -27,5 +27,4 @@ class Car(models.Model):
 class CarPhoto(models.Model):
     car = models.ForeignKey(Car, related_name="photos", on_delete=models.CASCADE)
     photo = models.ImageField(blank=True, null=True, upload_to="photos")
-
            

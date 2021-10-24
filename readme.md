@@ -13,6 +13,11 @@
 
 Simple REST API created with Django Rest Framework. Car booking app created for learning purpose.
 
+![Alt text](static/images/screens/screen1.png "Car list")
+![Alt text](static/images/screens/screen2.png "API root")
+![Alt text](static/images/screens/screen3.png "Swagger documentation")
+![Alt text](static/images/screens/screen4.png "Booking list in Postman, token authenticated")
+
 ## Technologies
  - Python
  - Django
