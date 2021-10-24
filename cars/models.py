@@ -28,15 +28,4 @@ class CarPhoto(models.Model):
     car = models.ForeignKey(Car, related_name="photos", on_delete=models.CASCADE)
     photo = models.ImageField(blank=True, null=True, upload_to="photos")
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        image = Image.open(self.photo)
-
-        if image.height > 800 or image.width > 800:
-            output_size = (800, 800)
-            imageBuffer = BytesIO()
-            image.thumbnail(output_size, Image.ANTIALIAS)
-            image.save(imageBuffer, image.format)
-
-
-            
+           
