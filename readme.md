@@ -44,6 +44,7 @@ Simple REST API created with Django Rest Framework. Car booking app created for 
  - create and update actions for nested viewsets
  - custom validations in serializers
  - booking overlapping prevention
+ - CORS headers
 
 ## To do
 
