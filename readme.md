@@ -12,6 +12,7 @@
 ## General info
 
 Simple REST API created with Django Rest Framework. Car booking app created for learning purpose.
+API uses JWT authentication but session auth is turned on too for easy browsing. You can log in with credentials: `Client01:CliPass01` or `Worker01:WorPass01`.
 
 ![Alt text](static/images/screens/screen1.png "Car list")
 ![Alt text](static/images/screens/screen2.png "API root")
@@ -85,4 +86,6 @@ Browse http://127.0.0.1:8000/
 Or
 
 Online demo: https://car-rental-rest-api.herokuapp.com/
+
+You can log in with credentials: `Client01:CliPass01` or `Worker01:WorPass01`. Reset and change password endpoints are commented out but you can still use and check them on local machine.
 
